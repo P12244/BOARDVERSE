@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>BOARDVERSE</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    *{
+      box-sizing:border-box;
+    }
+
+    html{
+      overflow-x:hidden;
+    }
+
+    body{
+      margin:0;
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at top,#0f172a,#020617 70%);
+      font-family:sans-serif;
+      color:white;
+    }
+
+    .bg-panel{
+      background:rgba(10,15,30,.75);
+      backdrop-filter:blur(18px);
+      box-shadow:
+        0 0 30px rgba(0,255,255,.06),
+        inset 0 0 20px rgba(255,255,255,.02);
+    }
+
+    .logo-text{
+      font-size:28px;
+      font-weight:900;
+      letter-spacing:2px;
+      background:linear-gradient(to right,#60a5fa,#a855f7);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .pill{
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      padding:7px 14px;
+      border-radius:999px;
+      color:#cbd5e1;
+      transition:.3s;
+      font-size:12px;
+    }
+
+    .pill:hover{
+      background:rgba(168,85,247,.2);
+      color:white;
+    }
+
+    .game-card{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:22px;
+      padding:18px;
+      transition:.35s;
+      position:relative;
+      overflow:hidden;
+      width:100%;
+      min-height:140px;
+      cursor:pointer;
+      touch-action:manipulation;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    .game-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(
+        135deg,
+        rgba(56,189,248,.08),
+        transparent,
+        rgba(168,85,247,.08)
+      );
+      opacity:0;
+      transition:.3s;
+    }
+
+    .game-card:hover::before{
+      opacity:1;
+    }
+
+    .game-card:hover{
+      transform:translateY(-5px) scale(1.03);
+      border-color:#38bdf8;
+      box-shadow:0 0 25px rgba(56,189,248,.25);
+    }
+
+    .game-card:active{
+      transform:scale(.97);
+    }
+
+    .card-inner{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap:10px;
+      height:100%;
+      position:relative;
+      z-index:2;
+    }
+
+    .icon{
+      font-size:40px;
+    }
+
+    .title{
+      font-weight:700;
+      font-size:15px;
+    }
+
+    .sub{
+      color:#94a3b8;
+      font-size:12px;
+    }
+
+    #bg-canvas{
+      width:100%;
+      height:100%;
+      position:fixed;
+      inset:0;
+      z-index:-10;
+    }
+
+    a{
+      width:100%;
+    }
+
+    /* MOBILE */
+    @media (max-width:768px){
+
+      body{
+        overflow-y:auto;
+      }
+
+      .logo-text{
+        font-size:24px;
+      }
+
+      .game-card{
+        min-height:120px;
+        padding:14px;
+        border-radius:18px;
+      }
+
+      .icon{
+        font-size:34px;
+      }
+
+      .title{
+        font-size:13px;
+      }
+
+      .sub{
+        font-size:10px;
+      }
+
+      .pill{
+        padding:8px 14px;
+        font-size:11px;
+      }
+
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+
+  <!-- Background -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Glow -->
+  <div class="absolute inset-0 pointer-events-none">
+    <svg class="w-full h-full" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="arcGrad" x1="0" x2="1">
+          <stop offset="0" stop-color="#0ea5e9" stop-opacity="0.08"/>
+          <stop offset="1" stop-color="#8b5cf6" stop-opacity="0.03"/>
+        </linearGradient>
+
+        <filter id="blur">
+          <feGaussianBlur stdDeviation="40"/>
+        </filter>
+      </defs>
+
+      <path d="M0,20 C40,80 160,0 320,60 C480,120 640,40 960,90 L960,0 L0,0 Z"
+            fill="url(#arcGrad)"
+            filter="url(#blur)"/>
+
+      <path d="M0,300 C200,200 400,360 800,220 C1200,80 1400,260 1920,200 L1920,1080 L0,1080 Z"
+            fill="url(#arcGrad)"
+            filter="url(#blur)"/>
+    </svg>
+  </div>
+
+  <div class="min-h-screen flex items-center justify-center px-3 sm:px-4 py-6">
+
+    <div class="w-full max-w-6xl relative">
+
+      <!-- LOGO -->
+      <header class="md:absolute md:-top-16 md:left-2 z-30 mb-5 md:mb-0">
+        <div class="logo px-3 py-2 rounded-md text-center md:text-left">
+          <span class="logo-text">BOARDVERSE</span>
+        </div>
+      </header>
+
+      <main class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-stretch">
+
+        <!-- IMAGE PANEL -->
+        <aside class="md:col-span-4 col-span-12 p-3 sm:p-4 rounded-3xl bg-panel border border-white/10 relative overflow-hidden order-first md:order-none">
+
+          <div class="w-full h-full flex items-center justify-center relative">
+
+            <img
+              src="jpg/2222.png"
+              alt="Gaming"
+              class="rounded-3xl object-cover w-full
+                     h-[240px] sm:h-[320px] md:h-full
+                     min-h-0 md:min-h-[520px]
+                     border border-cyan-400/20
+                     shadow-[0_0_50px_rgba(0,255,255,0.15)]
+                     hover:scale-[1.02] transition duration-500"
+            />
+
+            <div class="absolute inset-0 rounded-3xl
+                        bg-gradient-to-t
+                        from-cyan-500/10
+                        via-transparent
+                        to-purple-500/10">
+            </div>
+
+          </div>
+
+        </aside>
+
+        <!-- GAME PANEL -->
+        <section class="md:col-span-8 col-span-12 p-4 sm:p-5 md:p-6 rounded-3xl bg-panel border border-white/10 ">
+
+          <div class="flex flex-wrap items-center justify-center md:justify-end mb-5 gap-2">
+            <button class="pill">All</button>
+            <button class="pill">New</button>
+            <button class="pill">Hot</button>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+
+            <a href="https://game2-ivory-tau.vercel.app/" target="_blank">
+              <button class="game-card">
+                <div class="card-inner">
+                  <div class="icon"><img src="jpg/3333 (1).png" width="79" alt="รูปภาพ"></div>
+                  <div class="title">IMPOSTER</div>
+                  <div class="sub">เกมหาสายลับ</div>
+                </div>
+              </button>
+            </a>
+
+            <a href="https://google.com" target="_blank">
+              <button class="game-card">
+                <div class="card-inner">
+                  <div class="icon">♟️</div>
+                  <div class="title">Neon Chess</div>
+                  <div class="sub">Ranked</div>
+                </div>
+              </button>
+            </a>
+
+            <a href="https://google.com" target="_blank">
+              <button class="game-card">
+                <div class="card-inner">
+                  <div class="icon">🕹️</div>
+                  <div class="title">Retro Run</div>
+                  <div class="sub">Arcade</div>
+                </div>
+              </button>
+            </a>
+
+            <a href="https://google.com" target="_blank">
+              <button class="game-card">
+                <div class="card-inner">
+                  <div class="icon">🎯</div>
+                  <div class="title">Aim Arena</div>
+                  <div class="sub">1v1</div>
+                </div>
+              </button>
+            </a>
+
+            <a href="https://google.com" target="_blank">
+              <button class="game-card">
+                <div class="card-inner">
+                  <div class="icon">🧩</div>
+                  <div class="title">Puzzle Grid</div>
+                  <div class="sub">Relax</div>
+                </div>
+              </button>
+            </a>
+
+            <a href="https://google.com" target="_blank">
+              <button class="game-card">
+                <div class="card-inner">
+                  <div class="icon">🚀</div>
+                  <div class="title">Space Dash</div>
+                  <div class="sub">Speedrun</div>
+                </div>
+              </button>
+            </a>
+
+            <a href="https://google.com" target="_blank">
+              <button class="game-card">
+                <div class="card-inner">
+                  <div class="icon">🧠</div>
+                  <div class="title">Brainbolt</div>
+                  <div class="sub">Challenge</div>
+                </div>
+              </button>
+            </a>
+
+            <a href="https://google.com" target="_blank">
+              <button class="game-card">
+                <div class="card-inner">
+                  <div class="icon">🤝</div>
+                  <div class="title">Team Tactics</div>
+                  <div class="sub">Co-op</div>
+                </div>
+              </button>
+            </a>
+
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- PARTICLES -->
+  <script>
+    
+    const canvas = document.getElementById("bg-canvas");
+    const ctx = canvas.getContext("2d");
+
+    let particles = [];
+
+    function resize(){
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    resize();
+    window.addEventListener("resize", resize);
+
+    class Particle{
+      constructor(){
+        this.x = Math.random()*canvas.width;
+        this.y = Math.random()*canvas.height;
+        this.r = Math.random()*3;
+        this.dx = (Math.random()-.5)*0.4;
+        this.dy = (Math.random()-.5)*0.4;
+      }
+
+      draw(){
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+        ctx.fillStyle = "rgba(56,189,248,.7)";
+        ctx.fill();
+      }
+
+      update(){
+        this.x += this.dx;
+        this.y += this.dy;
+
+        if(this.x<0||this.x>canvas.width) this.dx*=-1;
+        if(this.y<0||this.y>canvas.height) this.dy*=-1;
+
+        this.draw();
+      }
+    }
+
+    for(let i=0;i<80;i++){
+      particles.push(new Particle());
+    }
+
+    function animate(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+
+      particles.forEach(p=>p.update());
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+
+</body>
+</html>

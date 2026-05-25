@@ -1,0 +1,119 @@
+@layer base {
+  /* Base dark textured background + subtle gradient */
+  body {
+    background: radial-gradient(ellipse at 10% 10%, rgba(14,165,233,0.02), transparent 5%),
+                radial-gradient(ellipse at 90% 90%, rgba(139,92,246,0.02), transparent 5%),
+                linear-gradient(180deg,#02060b 0%, #061023 60%);
+    color: #cbd5e1;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* textured pattern overlay */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.01) 0 1px, transparent 1px 12px);
+    z-index: -5;
+    pointer-events: none;
+  }
+
+  /* Panel look */
+  .bg-panel {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  }
+
+  /* Logo */
+  .logo-text {
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg,#60a5fa,#7c3aed);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 6px rgba(124,58,237,0.3), 0 1px 0 rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
+  .logo { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); }
+
+  /* Neon shadow */
+  .shadow-neon {
+    box-shadow: 0 6px 18px rgba(92,72,204,0.06), inset 0 1px 0 rgba(255,255,255,0.02);
+  }
+
+  /* Pills */
+  .pill {
+    background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 6px 10px;
+    border-radius: 999px;
+    color: #9fbcd6;
+  }
+
+  /* Game card */
+  .game-card {
+    background: linear-gradient(180deg, #052235 0%, #06213a 60%);
+    border-radius: 12px;
+    padding: 10px;
+    border: 2px solid rgba(255,255,255,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 220ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms, border-color 220ms;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .game-card .card-inner {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    color: #dbeafe;
+    text-align:center;
+  }
+
+  .game-card .icon { font-size: 28px; filter: drop-shadow(0 4px 10px rgba(59,130,246,0.12)); }
+
+  .game-card .title { font-weight:700; font-size:13px; color:#e6f6ff; }
+  .game-card .sub { font-size:11px; color:#8aa9be; }
+
+  .game-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 8px 30px rgba(124,58,237,0.18), 0 2px 10px rgba(14,165,233,0.06);
+    border-color: rgba(124,58,237,0.9);
+  }
+
+  .game-card:active { transform: translateY(-2px) scale(.99); }
+
+  /* Neon glow on hover - pseudo element for purple/blue glow */
+  .game-card::after {
+    content: "";
+    position: absolute;
+    inset: -30%;
+    background: radial-gradient(closest-side, rgba(124,58,237,0.12), transparent 30%),
+                radial-gradient(closest-side, rgba(14,165,233,0.06), transparent 30%);
+    opacity: 0;
+    transition: opacity 220ms;
+  }
+  .game-card:hover::after { opacity: 1; }
+
+  /* character size */
+  .character-svg { width: 100%; height: auto; max-width: 320px; }
+
+  /* responsive - on small screens show grid as 2x4 (wrap) */
+  @media (max-width: 767px) {
+    .game-grid { grid-template-columns: repeat(2, minmax(0,1fr)); grid-auto-rows: minmax(88px, auto); gap: 10px; }
+    .character-svg { max-width: 220px; transform: translateY(6px) scale(0.95); }
+    .logo-text { font-size: 16px; padding: 6px 8px; }
+    .game-card { border-radius: 14px; padding: 12px; }
+  }
+}
